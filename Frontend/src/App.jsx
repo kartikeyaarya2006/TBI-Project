@@ -1,88 +1,169 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Hero from './components/Hero';
-import Card from './components/Card';
-
-const Dashboard = () => (
-  <div className="max-w-7xl mx-auto px-6 py-16 flex-grow min-h-[65vh] w-full text-left">
-    <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-      <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">StaySense Management Dashboard</h2>
-      <p className="text-gray-500 leading-relaxed max-w-2xl">This workspace will hold active live analytics data pipelines from Google Business API and TripAdvisor scrapers.</p>
-    </div>
-  </div>
-);
-
-const About = () => (
-  <div className="max-w-7xl mx-auto px-6 py-16 flex-grow min-h-[65vh] w-full text-left">
-    <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-      <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">About StaySense Engine</h2>
-      <p className="text-gray-500 leading-relaxed max-w-2xl">An optimization software track developed to solve multi-platform review analysis manual overload issues for local property owners.</p>
-    </div>
-  </div>
-);
-
-const Login = () => (
-  <div className="max-w-md mx-auto my-16 p-8 bg-white border border-gray-100 rounded-2xl shadow-sm text-left">
-    <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-    <p className="text-sm text-gray-500 mb-6">Enter your credentials to access your dashboard.</p>
-    <div className="space-y-4">
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-2">Email Address</label>
-        <input type="email" placeholder="name@example.com" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500" />
-      </div>
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-2">Password</label>
-        <input type="password" placeholder="••••••••" className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500" />
-      </div>
-      <button className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition-colors text-sm shadow-sm shadow-indigo-100">Sign In</button>
-    </div>
-  </div>
-);
-
-const Home = () => {
-  const dataset = [
-    { id: 1, title: "Immaculate Rooms, Deficient Hot Water", description: "The hosting arrangement was absolutely gorgeous and tidy. However, the operational heating unit failed consistently after 10 PM on cold nights.", platform: "Booking.com", sentiment: "Mixed", rating: "3.5" },
-    { id: 2, title: "Phenomenal Scenic Location & Support", description: "Incredible mountain valley panorama windows and great local hospitality. StaySense platform identified our host praise notes seamlessly.", platform: "Google Reviews", sentiment: "Positive", rating: "5.0" }
-  ];
-
-  return (
-    <div className="flex flex-col flex-grow w-full">
-      <Hero />
-      <main className="max-w-7xl mx-auto px-6 sm:px-8 py-16 flex-grow w-full text-left">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-10">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Recent Guest Review Streams</h2>
-            <p className="text-sm text-gray-500 mt-1">Real-time incoming multi-channel property logs.</p>
-          </div>
-          <div className="mt-4 md:mt-0 flex gap-2">
-            <span className="px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-lg">Total Streams: 2</span>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-          {dataset.map(item => (
-            <Card key={item.id} {...item} />
-          ))}
-        </div>
-      </main>
-    </div>
-  );
-};
+import React, { useState, useEffect } from 'react';
+import { Button, Input, Modal, Toast, Loader } from './components/ui';
 
 export default function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [inputError, setInputError] = useState('');
+  const [isBtnLoading, setIsBtnLoading] = useState(false);
+
+  // 🌗 Robust Dark Mode DOM Synchronizer
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (darkMode) {
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
+    } else {
+      root.classList.remove('dark');
+      root.style.colorScheme = 'light';
+    }
+  }, [darkMode]);
+
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    setInputValue(val);
+    if (val.trim() === '') {
+      setInputError('This structural text input boundary is required.');
+    } else {
+      setInputError('');
+    }
+  };
+
+  const handleAsyncAction = () => {
+    setIsBtnLoading(true);
+    setToast({ message: 'Initializing analytical background worker tracking...', type: 'info' });
+    
+    setTimeout(() => {
+      setIsBtnLoading(false);
+      setToast({ message: 'Component systems sync sequence complete!', type: 'success' });
+    }, 2000);
+  };
+
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen bg-[#f8fafc] justify-between items-stretch">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+    <div className="w-full min-h-screen transition-colors duration-300 bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 pb-12">
+      
+      {/* 🌐 Global Sticky Header/Navbar Layout */}
+      <nav className="w-full h-20 px-8 flex items-center justify-between border-b border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-800 transition-colors">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white text-xl shadow-md">
+            S
+          </div>
+          <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent dark:from-indigo-400 dark:to-violet-400">
+            StaySense
+          </span>
+        </div>
+
+        {/* Theme Engine Action Pipeline Controls */}
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="secondary" 
+            onClick={() => setDarkMode(!darkMode)}
+            className="rounded-full !p-2.5"
+            title="Toggle Theme Engine Viewport Mode"
+          >
+            {darkMode ? (
+              <svg className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 14.05l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zm2.12-10.607a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"/></svg>
+            ) : (
+              <svg className="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+            )}
+          </Button>
+          <div className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-900 dark:text-indigo-300">
+            ID: TBI-26100212
+          </div>
+        </div>
+      </nav>
+
+      {/* 📊 Main Showcase Container */}
+      <main className="max-w-4xl mx-auto px-4 mt-12 text-center">
+        <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl text-gray-900 dark:text-white">
+          UI Component Showcase Arena
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-xl mx-auto text-sm">
+          Strict technical integration environment validating dynamic interfaces, JSDoc schemas, and responsive break-points.
+        </p>
+
+        {/* Interactive Grid Modules Area */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 text-left">
+          
+          {/* Card 1: Controls Form Showcase */}
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-2xl shadow-sm space-y-5">
+            <h2 className="text-lg font-bold border-b border-gray-100 dark:border-gray-800 pb-2 text-indigo-600 dark:text-indigo-400">
+              Form Control Modules
+            </h2>
+            <Input 
+              label="Feedback Scraper Target Identifier" 
+              placeholder="e.g., Booking.com Property Key Link"
+              value={inputValue}
+              onChange={handleInputChange}
+              error={inputError}
+            />
+            <div className="flex gap-3 flex-wrap pt-2">
+              <Button onClick={handleAsyncAction} isLoading={isBtnLoading}>
+                Trigger Async Loader
+              </Button>
+              <Button variant="secondary" onClick={() => setIsModalOpen(true)}>
+                Launch Modal Dialog
+              </Button>
+            </div>
+          </div>
+
+          {/* Card 2: Spinners & Notifications Testing */}
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div>
+              <h2 className="text-lg font-bold border-b border-gray-100 dark:border-gray-800 pb-2 text-indigo-600 dark:text-indigo-400 mb-4">
+                Global State Indicator
+              </h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                The layout spinner module below renders live async processing feedback behaviors dynamically.
+              </p>
+              <div className="py-6 flex justify-center">
+                <Loader size="lg" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="success" onClick={() => setToast({ message: 'Success metrics logged contextually!', type: 'success' })} className="w-full text-xs">
+                Success Alert
+              </Button>
+              <Button variant="danger" onClick={() => setToast({ message: 'Operational heating exception thrown.', type: 'error' })} className="w-full text-xs">
+                Danger Alert
+              </Button>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      {/* 🪟 Interactive Modal Module */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title="StaySense AI Processing Architecture"
+      >
+        <div className="space-y-3">
+          <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+            This viewport window processes raw string review data into predictive entity maps dynamically.
+          </p>
+          <div className="p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl text-xs font-mono text-gray-500 dark:text-gray-400">
+            [System Log Instance]: Pipeline matching active for 5 modular layouts.
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button variant="primary" onClick={() => setIsModalOpen(false)}>
+              Acknowledge Log
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 🚨 Alert Notice Toast Notification */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
+    </div>
   );
 }
